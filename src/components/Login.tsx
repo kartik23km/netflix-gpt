@@ -13,18 +13,29 @@ const Login: React.FunctionComponent<LogonProps> = () => {
   const nameRef = React.useRef<HTMLInputElement>(null);
 
   const handleSubmitBtn = () => {
-    if (emailRef.current && passwordRef.current && nameRef.current) {
-      setErrorMessage(
-        validateData({
-          email: emailRef.current.value,
-          password: passwordRef.current.value,
-          name: nameRef.current.value,
-        })
-      );
+    switch (isLoginForm) {
+      case true: {
+        if (emailRef.current && passwordRef.current) {
+          const val = validateData({
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+          });
+          setErrorMessage(val);
+        }
+        break;
+      }
+      case false: {
+        if (emailRef.current && passwordRef.current && nameRef.current) {
+          const val = validateData({
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+            name: nameRef.current.value,
+          });
+          setErrorMessage(val);
+        }
+      }
     }
   };
-
-  console.log(errorMessage);
 
   return (
     <div className="relative">
@@ -36,7 +47,9 @@ const Login: React.FunctionComponent<LogonProps> = () => {
         />
       </div>
       <div className="absolute bg-black/60 p-10 mx-auto left-0 right-0 w-1/4 flex flex-col gap-y-5 mt-24">
-        <div className="text-5xl text-white font-semibold">Sign In</div>
+        <div className="text-5xl text-white font-semibold">
+          {isLoginForm ? "Sign In" : "Sign Up"}
+        </div>
         <form onSubmit={(e) => e.preventDefault()}>
           {!isLoginForm && (
             <input
@@ -46,7 +59,6 @@ const Login: React.FunctionComponent<LogonProps> = () => {
               className="p-2 m-2 border w-full font-medium border-white rounded-sm text-white bg-gray-700/50"
             />
           )}
-
           <input
             ref={emailRef}
             type="text"
