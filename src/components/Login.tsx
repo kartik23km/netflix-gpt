@@ -1,6 +1,11 @@
 import * as React from "react";
 import Header from "./Header";
 import { validateData } from "../utils/validate";
+import { auth } from "../utils/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 interface LogonProps {}
 
@@ -33,6 +38,41 @@ const Login: React.FunctionComponent<LogonProps> = () => {
           });
           setErrorMessage(val);
         }
+      }
+    }
+    if (errorMessage) return;
+    if (!isLoginForm && emailRef.current && passwordRef.current) {
+      createUserWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      )
+        .then((userCredential: any) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+          // ..
+        });
+    } else {
+      if (emailRef.current && passwordRef.current) {
+        signInWithEmailAndPassword(
+          auth,
+          emailRef.current.value,
+          passwordRef.current.value
+        )
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setErrorMessage(errorCode + "-" + errorMessage);
+          });
       }
     }
   };
